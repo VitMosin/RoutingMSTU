@@ -38,6 +38,7 @@ public class MainActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
+    public CharSequence qrCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -67,6 +68,7 @@ public class MainActivity extends ActionBarActivity
         switch (number) {
             case 1:
                 mTitle = getString(R.string.title_section1);
+
                 break;
             case 2:
                 mTitle = getString(R.string.title_section2);
@@ -122,6 +124,7 @@ public class MainActivity extends ActionBarActivity
             if (resultCode == RESULT_OK) {
                 //get the extras that are returned from the intent
                 String contents = intent.getStringExtra("SCAN_RESULT");
+                qrCode = contents;
                 String format = intent.getStringExtra("SCAN_RESULT_FORMAT");
                 Toast toast = Toast.makeText(this, "Content:" + contents + " Format:" + format, Toast.LENGTH_LONG);
                 toast.show();
@@ -177,6 +180,10 @@ public class MainActivity extends ActionBarActivity
          */
         private static final String ARG_SECTION_NUMBER = "section_number";
 
+
+        private CharSequence qrCode;
+
+
         /**
          * Returns a new instance of this fragment for the given section
          * number.
@@ -196,12 +203,17 @@ public class MainActivity extends ActionBarActivity
         public View onCreateView(LayoutInflater inflater, ViewGroup container,
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
+
+            TextView myTextView = (TextView) rootView.findViewById(R.id.section_label);
+            myTextView.setText(qrCode);
+
             return rootView;
         }
 
         @Override
         public void onAttach(Activity activity) {
             super.onAttach(activity);
+            qrCode = ((MainActivity) activity).qrCode;
             ((MainActivity) activity).onSectionAttached(
                     getArguments().getInt(ARG_SECTION_NUMBER));
         }
