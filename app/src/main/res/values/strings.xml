@@ -1,0 +1,15 @@
+<resources>
+    <string name="app_name">Маршруты МГТУ</string>
+
+    <string name="title_section1">Главная</string>
+    <string name="title_section2">Фото QR</string>
+    <string name="title_section3">Найти место</string>
+    <string name="title_section4">Информация</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Маршруты</string>
+</resources>
