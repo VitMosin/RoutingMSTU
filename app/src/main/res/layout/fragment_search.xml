@@ -1,9 +1,58 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
-    android:layout_height="match_parent" tools:context="com.students.routingmstu.SearchFragment">
+    android:layout_height="match_parent"
+    tools:context="com.students.routingmstu.SearchFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView android:layout_width="match_parent" android:layout_height="match_parent"
-        android:text="@string/hello_blank_fragment" />
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:tools="http://schemas.android.com/tools"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" android:gravity="center" >
+        <!-- TODO: Update blank fragment layout -->
+        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+            android:text="@string/hello_blank_fragment" android:padding="40px"   />
 
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="100px">
+            <!-- TODO: Update blank fragment layout -->
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/corpus"   />
+            <EditText android:id="@+id/edit_corpus"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="1" />
+        </LinearLayout>
+
+        <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:padding="50px">
+            <!-- TODO: Update blank fragment layout -->
+            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                android:text="@string/audit" />
+            <EditText android:id="@+id/edit_audit"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:hint="201" />
+        </LinearLayout>
+
+        <ListView android:id="@+id/searchList"
+            xmlns:android="http://schemas.android.com/apk/res/android"
+            xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent"
+            android:layout_height="wrap_content" android:choiceMode="singleChoice"
+            android:divider="@android:color/transparent" android:dividerHeight="0dp"
+            android:background="#cccc" tools:context=".NavigationDrawerFragment"
+            />
+
+        <Button
+            android:layout_width="wrap_content" android:padding="0dp"
+            android:layout_height="wrap_content"
+            android:text="@string/tofind"/>
+    </LinearLayout>
 </FrameLayout>

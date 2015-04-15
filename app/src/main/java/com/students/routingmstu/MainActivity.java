@@ -6,6 +6,7 @@ import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.app.ActionBar;
 import android.support.v4.app.Fragment;
@@ -26,7 +27,7 @@ import android.widget.Toast;
 
 
 public class MainActivity extends ActionBarActivity
-        implements NavigationDrawerFragment.NavigationDrawerCallbacks {
+        implements NavigationDrawerFragment.NavigationDrawerCallbacks, SearchFragment.OnFragmentInteractionListener {
     static final String ACTION_SCAN = "com.google.zxing.client.android.SCAN";
 
     /**
@@ -57,31 +58,59 @@ public class MainActivity extends ActionBarActivity
 
     @Override
     public void onNavigationDrawerItemSelected(int position) {
-        // update the main content by replacing fragments
         FragmentManager fragmentManager = getSupportFragmentManager();
-        fragmentManager.beginTransaction()
-                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
-                .commit();
-    }
-
-    public void onSectionAttached(int number) {
-        switch (number) {
+        switch (position + 1) {
             case 1:
                 mTitle = getString(R.string.title_section1);
-
+                // update the main content by replacing fragments
+                fragmentManager.beginTransaction()
+                        .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                        .commit();
                 break;
             case 2:
                 mTitle = getString(R.string.title_section2);
                 scanQR();
                 break;
             case 3:
-
+                SearchFragment fr = new SearchFragment();
+                FragmentTransaction transaction = fragmentManager.beginTransaction();
+                transaction.replace(R.id.container, SearchFragment.newInstance("",""));
+                transaction.commit();
                 break;
             case 4:
                 Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://ru.wikipedia.org/wiki/Алгоритм_Дейкстры"));
                 startActivity(browserIntent);
                 break;
         }
+//        // update the main content by replacing fragments
+//        FragmentManager fragmentManager = getSupportFragmentManager();
+//        fragmentManager.beginTransaction()
+//                .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+//                .commit();
+    }
+
+    public void onSectionAttached(int number) {
+//        switch (number) {
+//            case 1:
+//                mTitle = getString(R.string.title_section1);
+//
+//                break;
+//            case 2:
+//                mTitle = getString(R.string.title_section2);
+//                scanQR();
+//                break;
+//            case 3:
+//                FragmentManager fragmentManager = getSupportFragmentManager();
+//                SearchFragment fr = new SearchFragment();
+//                fragmentManager.beginTransaction()
+//                        .replace(R.id.container, fr)
+//                        .commit();
+//                break;
+//            case 4:
+//                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://ru.wikipedia.org/wiki/Алгоритм_Дейкстры"));
+//                startActivity(browserIntent);
+//                break;
+//        }
     }
 
 
@@ -171,6 +200,11 @@ public class MainActivity extends ActionBarActivity
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onFragmentInteraction(Uri uri) {
+
     }
 
     /**

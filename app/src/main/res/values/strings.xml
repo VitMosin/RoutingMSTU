@@ -14,5 +14,8 @@
     <string name="action_settings">Маршруты</string>
 
 <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="hello_blank_fragment">Введите номер аудитории или выберите из списка место</string>
+    <string name="corpus">Корпус №</string>
+    <string name="audit">Аудитория №</string>
+    <string name="tofind">Найти</string>
 </resources>
