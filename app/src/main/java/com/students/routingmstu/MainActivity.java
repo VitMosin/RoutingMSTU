@@ -75,7 +75,10 @@ public class MainActivity extends ActionBarActivity
                 scanQR();
                 break;
             case 3:
-                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://ru.wikipedia.com"));
+
+                break;
+            case 4:
+                Intent browserIntent = new Intent(Intent.ACTION_VIEW, Uri.parse("https://ru.wikipedia.org/wiki/Алгоритм_Дейкстры"));
                 startActivity(browserIntent);
                 break;
         }
