@@ -1,31 +1,17 @@
 package com.students.routingmstu;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.content.ActivityNotFoundException;
-import android.content.DialogInterface;
-import android.content.Intent;
-import android.net.Uri;
-import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.ActionBar;
-import android.support.v4.app.Fragment;
-import android.support.v4.app.FragmentManager;
-import android.content.Context;
-import android.os.Build;
 import android.os.Bundle;
-import android.view.Gravity;
+import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.support.v4.widget.DrawerLayout;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ListView;
-import android.widget.TextView;
-import android.widget.Toast;
-
 
 /**
  * A simple {@link Fragment} subclass.
@@ -82,7 +68,7 @@ public class SearchFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        View searchView = inflater.inflate(R.layout.fragment_search, container, false);
+        final View searchView = inflater.inflate(R.layout.fragment_search, container, false);
         ListView listView = (ListView) searchView.findViewById(R.id.searchList);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -90,17 +76,33 @@ public class SearchFragment extends Fragment {
                 //selectItem(position);
             }
         });
+
         listView.setAdapter(new ArrayAdapter<String>(
                 getActionBar().getThemedContext(),
-                android.R.layout.simple_list_item_activated_1,
+                android.R.layout.simple_list_item_single_choice,
                 android.R.id.text1,
                 new String[]{
-                        getString(R.string.title_section1),
-                        getString(R.string.title_section2),
-                        getString(R.string.title_section3),
-                        getString(R.string.title_section4)
+                        "Кафедра САПР",
+                        "Буфет",
+                        "Столовая",
+                        "Гардероб",
+                        "Выход",
+                        "Библиотека",
+                        "Читальный зал"
                 }));
         //listView.setItemChecked(mCurrentSelectedPosition, true);
+
+        Button button = (Button) searchView.findViewById(R.id.searchButton);
+        button.setOnClickListener(new View.OnClickListener()
+        {
+            @Override
+            public void onClick(View v)
+            {
+                if (mListener != null) {
+                    mListener.onFragmentInteraction("Кафедра САПР\n6-302\n6-301\nВыход на лестницу\n2 этажа вниз\nПереход в 3 корпус");
+                }
+            }
+        });
         return searchView;
     }
 
@@ -109,11 +111,13 @@ public class SearchFragment extends Fragment {
     }
 
     // TODO: Rename method, update argument and hook method into UI event
-    public void onButtonPressed(Uri uri) {
+    public void onButtonPressed(View view) {
         if (mListener != null) {
-            mListener.onFragmentInteraction(uri);
+            mListener.onFragmentInteraction("Кафедра САПР\n6-302\n6-301\nВыход на лестницу\n2 этажа вниз\nПереход в 3 корпус");
         }
     }
+
+
 
     @Override
     public void onAttach(Activity activity) {
@@ -144,7 +148,7 @@ public class SearchFragment extends Fragment {
      */
     public interface OnFragmentInteractionListener {
         // TODO: Update argument type and name
-        public void onFragmentInteraction(Uri uri);
+        public void onFragmentInteraction(String text);
     }
 
 }

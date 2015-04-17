@@ -22,6 +22,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.support.v4.widget.DrawerLayout;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.PopupWindow;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -54,6 +56,9 @@ public class MainActivity extends ActionBarActivity
         mNavigationDrawerFragment.setUp(
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
+
+        // создаем объект для создания и управления версиями БД
+        FeedReaderDbHelper reader = new FeedReaderDbHelper(this);
     }
 
     @Override
@@ -203,8 +208,28 @@ public class MainActivity extends ActionBarActivity
     }
 
     @Override
-    public void onFragmentInteraction(Uri uri) {
+    public void onFragmentInteraction(String text) {
+        LayoutInflater layoutInflater
+                = (LayoutInflater)getBaseContext()
+                .getSystemService(LAYOUT_INFLATER_SERVICE);
+        View popupView = layoutInflater.inflate(R.layout.popuproute, null);
+        final PopupWindow popupWindow = new PopupWindow(
+                popupView,
+                android.app.ActionBar.LayoutParams.WRAP_CONTENT,
+                android.app.ActionBar.LayoutParams.WRAP_CONTENT);
 
+        Button btnDismiss = (Button)popupView.findViewById(R.id.dismiss);
+        TextView textView = (TextView)popupView.findViewById(R.id.routeText);
+        textView.setText(text);
+        btnDismiss.setOnClickListener(new Button.OnClickListener(){
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                popupWindow.dismiss();
+            }});
+
+        popupWindow.showAsDropDown(btnDismiss, 150, 300);
     }
 
     /**
