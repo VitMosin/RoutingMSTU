@@ -5,6 +5,8 @@ import android.app.AlertDialog;
 import android.content.ActivityNotFoundException;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.Uri;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBarActivity;
@@ -46,6 +48,26 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        // создаем объект для создания и управления версиями БД
+        FeedReaderDbHelper reader = new FeedReaderDbHelper(this);
+        SQLiteDatabase db = reader.getReadableDatabase();
+        Cursor c = db.query("Points", null, null, null, null, null, null);
+
+        // ставим позицию курсора на первую строку выборки
+        // если в выборке нет строк, вернется false
+        if (c.moveToFirst()) {
+
+            // определяем номера столбцов по имени в выборке
+            //int idColIndex = c.getColumnIndex("id");
+            int nameColIndex = c.getColumnIndex("ShortName");
+            // int emailColIndex = c.getColumnIndex("email");
+
+        }
+
+
+
+
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -57,8 +79,7 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        // создаем объект для создания и управления версиями БД
-        FeedReaderDbHelper reader = new FeedReaderDbHelper(this);
+
     }
 
     @Override
