@@ -139,6 +139,7 @@ public class SearchFragment extends Fragment {
 
                         //проставляем начальные условия
                         List<Point> allPoints = GetPoints("1 = 1", null);
+                        List<Length> allLengthes = GetLengthes("1 = 1", null);
                         for(Iterator<Point> i = allPoints.iterator(); i.hasNext(); ) {
                             Point item = i.next();
                             if (item.Id == _point.Id)
@@ -151,7 +152,14 @@ public class SearchFragment extends Fragment {
                             }
                         }
 
-                        
+                        Point minPoint = ExistNoVisitedPoint(allPoints);
+                        while (minPoint != null)
+                        {
+                            minPoint.IsVisited = true;
+                            MarkLinkedPoints(minPoint, allPoints, allLengthes);
+
+                            minPoint = ExistNoVisitedPoint(allPoints);
+                        }
                     }
                     else
                     {
@@ -168,26 +176,90 @@ public class SearchFragment extends Fragment {
     }
 
 
-private List<Point> GetPoints(String p_selection, String[] p_selectionArgs) {
-    String[] projection = {
-            FeedReaderContract.PointEntry._ID,
-            FeedReaderContract.PointEntry.COLUMN_NAME_SHORTNAME,
-    };
-    Cursor c = db.query("Points", projection, p_selection, p_selectionArgs, null, null, null);
 
-    List<Point> points = new ArrayList<Point>();
-    if (c.moveToFirst()) {
-        do {
-            Point point = new Point();
-            // определяем номера столбцов по имени в выборке
-            point.Id = c.getInt(0);
-            point.ShortName = c.getString(1);
-            points.add(point);
-        } while (c.moveToNext());
+    private void MarkLinkedPoints(Point p_point, List<Point> p_allPoints, List<Length> p_allLengthes) {
+        for(Iterator<Point> i = p_allPoints.iterator(); i.hasNext(); ) {
+            Point item = i.next();
+            if (!item.IsVisited)
+            {
+                MarkLinkedPoint(p_point, item, p_allLengthes);
+            }
+        }
     }
-    return points;
-}
 
+
+
+    private void MarkLinkedPoint(Point p_pointFrom, Point p_pointTo, List<Length> p_allLengthes) {
+        for(Iterator<Length> i = p_allLengthes.iterator(); i.hasNext(); ) {
+            Length length = i.next();
+            if (length.StartPointId == p_pointFrom.Id && length.EndPointId == p_pointTo.Id
+                    || length.EndPointId == p_pointFrom.Id && length.StartPointId == p_pointTo.Id)
+            {
+                if (p_pointTo.Weight > p_pointFrom.Weight + length.Length)
+                {
+                    p_pointTo.Weight = p_pointFrom.Weight + length.Length;
+                }
+            }
+        }
+    }
+
+
+    private Point ExistNoVisitedPoint(List<Point> p_allPoints) {
+        Point result = null;
+        for(Iterator<Point> i = p_allPoints.iterator(); i.hasNext(); ) {
+            Point item = i.next();
+            if (!item.IsVisited && (result == null || result.Weight > item.Weight ))
+            {
+                result = item;
+            }
+        }
+        return result;
+    }
+
+
+    private List<Point> GetPoints(String p_selection, String[] p_selectionArgs) {
+        String[] projection = {
+                FeedReaderContract.PointEntry._ID,
+                FeedReaderContract.PointEntry.COLUMN_NAME_SHORTNAME,
+        };
+        Cursor c = db.query("Points", projection, p_selection, p_selectionArgs, null, null, null);
+
+        List<Point> points = new ArrayList<Point>();
+        if (c.moveToFirst()) {
+            do {
+                Point point = new Point();
+                // определяем номера столбцов по имени в выборке
+                point.Id = c.getInt(0);
+                point.ShortName = c.getString(1);
+                points.add(point);
+            } while (c.moveToNext());
+        }
+        return points;
+    }
+
+
+    private List<Length> GetLengthes(String p_selection, String[] p_selectionArgs) {
+        String[] projection = {
+                FeedReaderContract.LengthEntry._ID,
+                FeedReaderContract.LengthEntry.COLUMN_NAME_STARTPOINTID,
+                FeedReaderContract.LengthEntry.COLUMN_NAME_ENDPOINTID,
+                FeedReaderContract.LengthEntry.COLUMN_NAME_LENGTH
+        };
+        Cursor c = db.query("Lengthes", projection, p_selection, p_selectionArgs, null, null, null);
+
+        List<Length> lengthes = new ArrayList<Length>();
+        if (c.moveToFirst()) {
+            do {
+                Length length = new Length();
+                length.Id = c.getInt(0);
+                length.StartPointId = c.getInt(1);
+                length.EndPointId = c.getInt(2);
+                length.Length = c.getInt(3);
+                lengthes.add(length);
+            } while (c.moveToNext());
+        }
+        return lengthes;
+    }
 
     private ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
