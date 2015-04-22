@@ -49,25 +49,6 @@ public class MainActivity extends ActionBarActivity
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        // создаем объект для создания и управления версиями БД
-        FeedReaderDbHelper reader = new FeedReaderDbHelper(this);
-        SQLiteDatabase db = reader.getReadableDatabase();
-        Cursor c = db.query("Points", null, null, null, null, null, null);
-
-        // ставим позицию курсора на первую строку выборки
-        // если в выборке нет строк, вернется false
-        if (c.moveToFirst()) {
-
-            // определяем номера столбцов по имени в выборке
-            //int idColIndex = c.getColumnIndex("id");
-            int nameColIndex = c.getColumnIndex("ShortName");
-            // int emailColIndex = c.getColumnIndex("email");
-
-        }
-
-
-
-
         setContentView(R.layout.activity_main);
 
         mNavigationDrawerFragment = (NavigationDrawerFragment)
@@ -90,7 +71,7 @@ public class MainActivity extends ActionBarActivity
                 mTitle = getString(R.string.title_section1);
                 // update the main content by replacing fragments
                 fragmentManager.beginTransaction()
-                        .replace(R.id.container, PlaceholderFragment.newInstance(position + 1))
+                        .replace(R.id.container, PlaceholderFragment.newInstance((String)qrCode))
                         .commit();
                 break;
             case 2:
@@ -100,7 +81,7 @@ public class MainActivity extends ActionBarActivity
             case 3:
                 SearchFragment fr = new SearchFragment();
                 FragmentTransaction transaction = fragmentManager.beginTransaction();
-                transaction.replace(R.id.container, SearchFragment.newInstance("",""));
+                transaction.replace(R.id.container, SearchFragment.newInstance((String)this.qrCode));
                 transaction.commit();
                 break;
             case 4:
@@ -261,7 +242,7 @@ public class MainActivity extends ActionBarActivity
          * The fragment argument representing the section number for this
          * fragment.
          */
-        private static final String ARG_SECTION_NUMBER = "section_number";
+        private static final String ARG_QR_NAME = "qrName";
 
 
         private CharSequence qrCode;
@@ -271,10 +252,10 @@ public class MainActivity extends ActionBarActivity
          * Returns a new instance of this fragment for the given section
          * number.
          */
-        public static PlaceholderFragment newInstance(int sectionNumber) {
+        public static PlaceholderFragment newInstance(String qrName) {
             PlaceholderFragment fragment = new PlaceholderFragment();
             Bundle args = new Bundle();
-            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
+            args.putString(ARG_QR_NAME, qrName);
             fragment.setArguments(args);
             return fragment;
         }
@@ -287,8 +268,9 @@ public class MainActivity extends ActionBarActivity
                                  Bundle savedInstanceState) {
             View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
+            String qrName = getArguments().getString(ARG_QR_NAME);
             TextView myTextView = (TextView) rootView.findViewById(R.id.section_label);
-            myTextView.setText(qrCode);
+            myTextView.setText(qrName);
 
             return rootView;
         }
@@ -298,7 +280,7 @@ public class MainActivity extends ActionBarActivity
             super.onAttach(activity);
             qrCode = ((MainActivity) activity).qrCode;
             ((MainActivity) activity).onSectionAttached(
-                    getArguments().getInt(ARG_SECTION_NUMBER));
+                    getArguments().getInt(ARG_QR_NAME));
         }
     }
 

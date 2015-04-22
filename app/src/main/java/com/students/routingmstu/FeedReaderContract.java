@@ -16,7 +16,7 @@ public class FeedReaderContract {
         public static final String COLUMN_NAME_ENTRY_ID = "Id";
         public static final String COLUMN_NAME_SHORTNAME = "ShortName";
         public static final String COLUMN_NAME_FULLNAME = "FullName";
-
+        public static final String COLUMN_NAME_ISIMPORTANT = "IsImportant";
     }
 
 

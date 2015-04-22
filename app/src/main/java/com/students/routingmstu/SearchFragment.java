@@ -1,6 +1,8 @@
 package com.students.routingmstu;
 
 import android.app.Activity;
+import android.database.Cursor;
+import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
@@ -11,7 +13,12 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.TextView;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
@@ -24,12 +31,11 @@ import android.widget.ListView;
 public class SearchFragment extends Fragment {
     // TODO: Rename parameter arguments, choose names that match
     // the fragment initialization parameters, e.g. ARG_ITEM_NUMBER
-    private static final String ARG_PARAM1 = "param1";
-    private static final String ARG_PARAM2 = "param2";
+    private static final String ARG_POINT = "point";
 
     // TODO: Rename and change types of parameters
-    private String mParam1;
-    private String mParam2;
+    private Point _point;
+    SQLiteDatabase db;
 
     private OnFragmentInteractionListener mListener;
 
@@ -38,15 +44,13 @@ public class SearchFragment extends Fragment {
      * this fragment using the provided parameters.
      *
      * @param param1 Parameter 1.
-     * @param param2 Parameter 2.
      * @return A new instance of fragment SearchFragment.
      */
     // TODO: Rename and change types and number of parameters
-    public static SearchFragment newInstance(String param1, String param2) {
+    public static SearchFragment newInstance(String param1) {
         SearchFragment fragment = new SearchFragment();
         Bundle args = new Bundle();
-        args.putString(ARG_PARAM1, param1);
-        args.putString(ARG_PARAM2, param2);
+        args.putString(ARG_POINT, param1);
         fragment.setArguments(args);
         return fragment;
     }
@@ -59,14 +63,25 @@ public class SearchFragment extends Fragment {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
-            mParam1 = getArguments().getString(ARG_PARAM1);
-            mParam2 = getArguments().getString(ARG_PARAM2);
+            // создаем объект для создания и управления версиями БД
+            FeedReaderDbHelper reader = new FeedReaderDbHelper(getActivity());
+            db = reader.getReadableDatabase();
+
+            String pointName = getArguments().getString(ARG_POINT);
+            if (pointName != null && pointName != "") {
+                List<Point> points = GetPoints("ShortName = ?", new String[]{pointName});
+                if (points != null && !points.isEmpty()) {
+                    _point = points.get(0);
+                }
+            }
         }
     }
+
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         // Inflate the layout for this fragment
         final View searchView = inflater.inflate(R.layout.fragment_search, container, false);
         ListView listView = (ListView) searchView.findViewById(R.id.searchList);
@@ -77,20 +92,13 @@ public class SearchFragment extends Fragment {
             }
         });
 
-        listView.setAdapter(new ArrayAdapter<String>(
+        List<Point> points = GetPoints("IsImportant = ?", new String[] {"1"});
+        listView.setAdapter(new ArrayAdapter<Point>(
                 getActionBar().getThemedContext(),
                 android.R.layout.simple_list_item_single_choice,
                 android.R.id.text1,
-                new String[]{
-                        "Кафедра САПР",
-                        "Буфет",
-                        "Столовая",
-                        "Гардероб",
-                        "Выход",
-                        "Библиотека",
-                        "Читальный зал"
-                }));
-        //listView.setItemChecked(mCurrentSelectedPosition, true);
+                points));
+
 
         Button button = (Button) searchView.findViewById(R.id.searchButton);
         button.setOnClickListener(new View.OnClickListener()
@@ -98,13 +106,67 @@ public class SearchFragment extends Fragment {
             @Override
             public void onClick(View v)
             {
+                String result = "Необходимо определить начальную точку";
+                if (_point != null) {
+                    Point endPoint = null;
+                    ListView listView = (ListView) searchView.findViewById(R.id.searchList);
+                    Object obj = listView.getSelectedItem();
+                    if (obj != null) {
+                        endPoint = (Point) obj;
+                    } else {
+                        EditText textViewCorpus = (EditText) searchView.findViewById(R.id.edit_corpus);
+                        EditText textViewAdit = (EditText) searchView.findViewById(R.id.edit_audit);
+                        String corpus =  textViewCorpus.getText().toString();
+                        String audit = textViewAdit.getText().toString();
+
+                        if (corpus != null && corpus != "" && audit != null && audit != "")
+                        {
+
+                                List<Point> points = GetPoints("ShortName = ?", new String[]{corpus + "-" + audit});
+                                if (points != null && !points.isEmpty()) {
+                                    endPoint = points.get(0);
+                                }
+                        }
+                    }
+                    if (endPoint != null)
+                    {
+                        //алгоритм Дейкстры
+                    }
+                    else
+                    {
+                        result = "Конечная точка отсутствует в базе данных";
+                    }
+                }
+
                 if (mListener != null) {
-                    mListener.onFragmentInteraction("Кафедра САПР\n6-302\n6-301\nВыход на лестницу\n2 этажа вниз\nПереход в 3 корпус");
+                    mListener.onFragmentInteraction(result);
                 }
             }
         });
         return searchView;
     }
+
+
+private List<Point> GetPoints(String p_selection, String[] p_selectionArgs) {
+    String[] projection = {
+            FeedReaderContract.PointEntry._ID,
+            FeedReaderContract.PointEntry.COLUMN_NAME_SHORTNAME,
+    };
+    Cursor c = db.query("Points", projection, p_selection, p_selectionArgs, null, null, null);
+
+    List<Point> points = new ArrayList<Point>();
+    if (c.moveToFirst()) {
+        do {
+            Point point = new Point();
+            // определяем номера столбцов по имени в выборке
+            point.Id = c.getInt(0);
+            point.ShortName = c.getString(1);
+            points.add(point);
+        } while (c.moveToNext());
+    }
+    return points;
+}
+
 
     private ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
