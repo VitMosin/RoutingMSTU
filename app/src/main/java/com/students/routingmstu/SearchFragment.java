@@ -17,7 +17,11 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
+import com.android.internal.util.Predicate;
+
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -131,6 +135,23 @@ public class SearchFragment extends Fragment {
                     if (endPoint != null)
                     {
                         //алгоритм Дейкстры
+                        Point startPoint = null;
+
+                        //проставляем начальные условия
+                        List<Point> allPoints = GetPoints("1 = 1", null);
+                        for(Iterator<Point> i = allPoints.iterator(); i.hasNext(); ) {
+                            Point item = i.next();
+                            if (item.Id == _point.Id)
+                            {
+                                startPoint = item;
+                                startPoint.Weight = 0;
+                            }
+                            else {
+                                item.Weight = 100;
+                            }
+                        }
+
+                        
                     }
                     else
                     {
