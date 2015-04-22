@@ -23,16 +23,17 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
                     FeedReaderContract.PointEntry.COLUMN_NAME_FULLNAME + TEXT_TYPE + COMMA_SEP +
                     FeedReaderContract.PointEntry.COLUMN_NAME_ISIMPORTANT + BIT_TYPE +
     // Any other options for the CREATE command
-            " ); " +
+            " ); ";
+    private static final String SQL_CREATE_LENGTHES =
             "CREATE TABLE " + FeedReaderContract.LengthEntry.TABLE_NAME + " (" +
                     FeedReaderContract.LengthEntry._ID + " INTEGER PRIMARY KEY," +
                     FeedReaderContract.LengthEntry.COLUMN_NAME_STARTPOINTID + INTEGER_TYPE + COMMA_SEP +
                     FeedReaderContract.LengthEntry.COLUMN_NAME_ENDPOINTID + INTEGER_TYPE + COMMA_SEP +
                     FeedReaderContract.LengthEntry.COLUMN_NAME_LENGTH + INTEGER_TYPE +
                     // Any other options for the CREATE command
-                    " ) " ;
+                    " ); " ;
 
-    private static final String SQL_FILL_ENTRIES =
+    private static final String SQL_FILL_POINTS =
     "INSERT INTO " + FeedReaderContract.PointEntry.TABLE_NAME +
             "(" +
             FeedReaderContract.PointEntry._ID + ", " +
@@ -66,7 +67,8 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
             "(24, \"6-201\", \"6-201\", 0), " +
             "(25, \"6-202\", \"6-202\", 0), " +
             "(26, \"Прямо по коридору\", \"Прямо по коридору\", 0), " +
-            "(27, \"Буфет\", \"Буфет\", 1); " +
+            "(27, \"Буфет\", \"Буфет\", 1); ";
+    private static final String SQL_FILL_LENGTHES =
             "INSERT INTO " + FeedReaderContract.LengthEntry.TABLE_NAME +
             "(" +
             FeedReaderContract.LengthEntry._ID + ", " +
@@ -75,34 +77,34 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
             FeedReaderContract.LengthEntry.COLUMN_NAME_LENGTH +
             ") VALUES " +
             "(1, 1, 2, 1), " +
-            "(1, 2, 3, 1), " +
-            "(1, 3, 4, 1), " +
-            "(1, 4, 5, 6), " +
-            "(1, 5, 6, 2), " +
-            "(1, 4, 7, 3), " +
-            "(1, 7, 8, 10), " +
-            "(1, 8, 9, 8), " +
-            "(1, 9, 10, 5), " +
-            "(1, 10, 11, 1), " +
-            "(1, 11, 12, 1), " +
-            "(1, 12, 13, 5), " +
-            "(1, 10, 13, 3), " +
-            "(1, 9, 12, 5), " +
-            "(1, 13, 14, 3), " +
-            "(1, 14, 15, 6), " +
-            "(1, 15, 16, 3), " +
-            "(1, 16, 17, 3), " +
-            "(1, 17, 18, 4), " +
-            "(1, 18, 19, 1), " +
-            "(1, 14, 20, 3), " +
-            "(1, 20, 21, 8), " +
-            "(1, 21, 22, 4), " +
-            "(1, 20, 23, 5), " +
-            "(1, 23, 24, 2), " +
-            "(1, 24, 25, 1), " +
-            "(1, 25, 26, 1), " +
-            "(1, 26, 27, 1), " +
-            "(1, 4, 23, 3); ";
+            "(2, 2, 3, 1), " +
+            "(3, 3, 4, 2), " +
+            "(4, 4, 5, 6), " +
+            "(5, 5, 6, 2), " +
+            "(6, 4, 7, 3), " +
+            "(7, 7, 8, 10), " +
+            "(8, 8, 9, 8), " +
+            "(9, 9, 10, 5), " +
+            "(10, 10, 11, 1), " +
+            "(11, 11, 12, 1), " +
+            "(12, 12, 13, 5), " +
+            "(13, 10, 13, 3), " +
+            "(14, 9, 12, 5), " +
+            "(15, 13, 14, 3), " +
+            "(16, 14, 15, 6), " +
+            "(17, 15, 16, 3), " +
+            "(18, 16, 17, 3), " +
+            "(19, 17, 18, 4), " +
+            "(20, 18, 19, 1), " +
+            "(21, 14, 20, 3), " +
+            "(22, 20, 21, 8), " +
+            "(23, 21, 22, 4), " +
+            "(24, 20, 23, 5), " +
+            "(25, 23, 24, 2), " +
+            "(26, 24, 25, 1), " +
+            "(27, 25, 26, 1), " +
+            "(28, 26, 27, 1), " +
+            "(29, 4, 23, 3); ";
 
 
     private static final String SQL_DELETE_ENTRIES =
@@ -114,7 +116,10 @@ public class FeedReaderDbHelper extends SQLiteOpenHelper {
     }
     public void onCreate(SQLiteDatabase db) {
         db.execSQL(SQL_CREATE_POINTS);
-        db.execSQL(SQL_FILL_ENTRIES);
+        db.execSQL(SQL_CREATE_LENGTHES);
+
+        db.execSQL(SQL_FILL_POINTS);
+        db.execSQL(SQL_FILL_LENGTHES);
     }
     public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
         // This database is only a cache for online data, so its upgrade policy is

@@ -10,6 +10,7 @@ public class Point {
     public boolean IsImportant;
     public boolean IsVisited;
     public int Weight;
+    public String Route = "";
 
     @Override
     public String toString() {

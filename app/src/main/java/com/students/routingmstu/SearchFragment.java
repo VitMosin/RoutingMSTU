@@ -39,6 +39,7 @@ public class SearchFragment extends Fragment {
 
     // TODO: Rename and change types of parameters
     private Point _point;
+    private Point _selectedPoint;
     SQLiteDatabase db;
 
     private OnFragmentInteractionListener mListener;
@@ -92,7 +93,7 @@ public class SearchFragment extends Fragment {
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //selectItem(position);
+                _selectedPoint = (Point) parent.getItemAtPosition(position);
             }
         });
 
@@ -112,12 +113,8 @@ public class SearchFragment extends Fragment {
             {
                 String result = "Необходимо определить начальную точку";
                 if (_point != null) {
-                    Point endPoint = null;
-                    ListView listView = (ListView) searchView.findViewById(R.id.searchList);
-                    Object obj = listView.getSelectedItem();
-                    if (obj != null) {
-                        endPoint = (Point) obj;
-                    } else {
+                    Point endPoint = _selectedPoint;
+                    if (endPoint == null) {
                         EditText textViewCorpus = (EditText) searchView.findViewById(R.id.edit_corpus);
                         EditText textViewAdit = (EditText) searchView.findViewById(R.id.edit_audit);
                         String corpus =  textViewCorpus.getText().toString();
@@ -142,6 +139,10 @@ public class SearchFragment extends Fragment {
                         List<Length> allLengthes = GetLengthes("1 = 1", null);
                         for(Iterator<Point> i = allPoints.iterator(); i.hasNext(); ) {
                             Point item = i.next();
+                            if (item.Id == endPoint.Id)
+                            {
+                                endPoint = item;
+                            }
                             if (item.Id == _point.Id)
                             {
                                 startPoint = item;
@@ -160,6 +161,7 @@ public class SearchFragment extends Fragment {
 
                             minPoint = ExistNoVisitedPoint(allPoints);
                         }
+                        result = endPoint.Route;
                     }
                     else
                     {
@@ -198,6 +200,7 @@ public class SearchFragment extends Fragment {
                 if (p_pointTo.Weight > p_pointFrom.Weight + length.Length)
                 {
                     p_pointTo.Weight = p_pointFrom.Weight + length.Length;
+                    p_pointTo.Route = p_pointFrom.Route + "\n" + p_pointTo.ShortName + "\n";
                 }
             }
         }
@@ -222,7 +225,7 @@ public class SearchFragment extends Fragment {
                 FeedReaderContract.PointEntry._ID,
                 FeedReaderContract.PointEntry.COLUMN_NAME_SHORTNAME,
         };
-        Cursor c = db.query("Points", projection, p_selection, p_selectionArgs, null, null, null);
+        Cursor c = db.query(FeedReaderContract.PointEntry.TABLE_NAME, projection, p_selection, p_selectionArgs, null, null, null);
 
         List<Point> points = new ArrayList<Point>();
         if (c.moveToFirst()) {
@@ -245,7 +248,7 @@ public class SearchFragment extends Fragment {
                 FeedReaderContract.LengthEntry.COLUMN_NAME_ENDPOINTID,
                 FeedReaderContract.LengthEntry.COLUMN_NAME_LENGTH
         };
-        Cursor c = db.query("Lengthes", projection, p_selection, p_selectionArgs, null, null, null);
+        Cursor c = db.query(FeedReaderContract.LengthEntry.TABLE_NAME, projection, p_selection, p_selectionArgs, null, null, null);
 
         List<Length> lengthes = new ArrayList<Length>();
         if (c.moveToFirst()) {
