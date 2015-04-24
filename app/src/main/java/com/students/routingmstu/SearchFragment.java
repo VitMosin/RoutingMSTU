@@ -264,6 +264,18 @@ public class SearchFragment extends Fragment {
         return lengthes;
     }
 
+
+    public void SetStartPoint(String p_pointName)
+    {
+        if (p_pointName != null && p_pointName != "") {
+            List<Point> points = GetPoints("ShortName = ?", new String[]{p_pointName});
+            if (points != null && !points.isEmpty()) {
+                _point = points.get(0);
+            }
+        }
+    }
+
+
     private ActionBar getActionBar() {
         return ((ActionBarActivity) getActivity()).getSupportActionBar();
     }
